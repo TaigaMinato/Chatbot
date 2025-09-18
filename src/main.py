@@ -1,30 +1,45 @@
-import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import OpenAI
+import os
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # Load environment variables
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # フロントのURL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# OpenAI クライアント初期化
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
+# リクエスト用のデータモデル
 class ChatRequest(BaseModel):
     message: str
 
 
+# 動作確認用エンドポイント
 @app.get("/hello")
 def hello():
     return {"message": "Hello, FastAPI is working!"}
 
 
+# OpenAI API と連携するエンドポイント
 @app.post("/chat")
 def chat(req: ChatRequest):
-    """Receive user message, send to OpenAI API, return reply"""
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": req.message}],
+        model="gpt-4o-mini", messages=[{"role": "user", "content": req.message}]
     )
-    return {"reply": response.choices[0].message.content}
+    reply = response.choices[0].message.content
+    return {"reply": reply}
