@@ -4,3 +4,4 @@ openai
 pytest
 ruff
 httpx
+python-dotenv
