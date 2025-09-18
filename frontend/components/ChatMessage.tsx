@@ -5,15 +5,18 @@ type ChatMessageProps = {
 
 export default function ChatMessage({ role, content }: ChatMessageProps) {
     const isUser = role === "user";
-
     return (
         <div
-            className={`p-3 my-2 rounded-lg max-w-[80%] ${isUser
-                    ? "bg-blue-500 text-white self-end"
-                    : "bg-gray-200 text-black self-start"
-                }`}
+            className={`flex ${isUser ? "justify-end" : "justify-start"}`}
         >
-            {content}
+            <div
+                className={`px-4 py-2 rounded-2xl max-w-[75%] text-sm leading-relaxed ${isUser
+                        ? "bg-amber-200 text-neutral-900 rounded-br-none"  // ユーザー → ベージュ
+                        : "bg-white text-neutral-800 rounded-bl-none"      // アシスタント → 白ベース
+                    }`}
+            >
+                {content}
+            </div>
         </div>
     );
 }
