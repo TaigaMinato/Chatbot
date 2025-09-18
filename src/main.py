@@ -19,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # OpenAI クライアント初期化
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -35,11 +34,24 @@ def hello():
     return {"message": "Hello, FastAPI is working!"}
 
 
-# OpenAI API と連携するエンドポイント
+# OpenAI API と連携するエンドポイント（ギャル口調固定）
 @app.post("/chat")
 def chat(req: ChatRequest):
     response = client.chat.completions.create(
-        model="gpt-4o-mini", messages=[{"role": "user", "content": req.message}]
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a cheerful Japanese 'gyaru' character. "
+                    "Always reply in casual Japanese with slang like "
+                    "〜だよねぇ, 〜じゃん, 〜かも〜. "
+                    "Keep the tone friendly, flashy, and slightly over-explaining, "
+                    "like chatting with a close friend."
+                ),
+            },
+            {"role": "user", "content": req.message},
+        ],
     )
     reply = response.choices[0].message.content
     return {"reply": reply}
